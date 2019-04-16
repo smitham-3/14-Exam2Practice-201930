@@ -43,9 +43,9 @@ def main():
     run_test_init()
     run_test_append_string()
     # run_test_double()
-    # run_test_shrink()
-    run_test_double_then_shrink()
-    run_test_reset()
+    run_test_shrink()
+    # run_test_double_then_shrink()
+    # run_test_reset()
     # run_test_steal()
     # run_test_get_history()
     # run_test_combined_box()
@@ -164,14 +164,18 @@ class Box(object):
         #       Read_this_ONLY_when_asked_Part_2.txt
         #    and complete your work on the problem.
         # ---------------------------------------------------------------------
-        overflow = ""
-        self.contents = self.contents + additional_contents
-        if len(self.contents) <= self.volume:
-            return overflow
-        else:
-            for k in range(self.volume, len(self.contents)):
-                overflow = overflow + self.contents[k]
-        return overflow
+        space = self.volume - len(self.contents)
+        number_of_characters_to_append = min(space, len(additional_contents))
+        stuff_to_add = ''
+        for k in range(number_of_characters_to_append):
+            stuff_to_add = stuff_to_add + additional_contents[k]
+        self.contents = self.contents + stuff_to_add
+        stuff_to_return = ''
+        for k in range(number_of_characters_to_append,
+                       len(additional_contents)):
+            stuff_to_return = stuff_to_return + additional_contents[k]
+        return stuff_to_return
+
 
     def double(self):
         """
@@ -220,7 +224,7 @@ class Box(object):
         #    ** TWO **   LINES OF CODE.
         #######################################################################
         self.append_string(self.contents)
-        return self.contents
+
 
     def shrink(self, new_volume):
         """
@@ -269,14 +273,13 @@ class Box(object):
         # IMPORTANT: Write a solution to this problem in pseudo-code,
         # and THEN translate the pseudo-code to a solution.
         # ---------------------------------------------------------------------
-        self.volume = new_volume
-        overflow = ""
-        if len(self.contents) <= self.volume:
-            overflow = ""
-        else:
-            for k in range(self.volume, len(self.contents)):
-                overflow = overflow + self.contents[k]
-        return overflow
+        space = new_volume - len(self.contents)
+        number_of_characters_to_append = min(space, len(self.contents))
+        stuff_to_return = ''
+        for k in range(number_of_characters_to_append,
+                       len(self.contents)):
+            stuff_to_return = stuff_to_return + self.contents[k]
+        return stuff_to_return
 
     def double_then_shrink(self, new_volume):
         """
@@ -358,7 +361,10 @@ class Box(object):
         #    TIME ESTIMATE:   5 minutes.
         # ---------------------------------------------------------------------
         self.volume = self.originalv
-        self.contents = self.originalc
+        if len(self.originalc) >= self.originalv:
+            self.contents = ""
+        else:
+            self.contents = self.originalc
 
     def steal(self, other_box):
         """
@@ -457,6 +463,8 @@ class Box(object):
         #    DIFFICULTY:      4
         #    TIME ESTIMATE:   5 minutes.
         # ---------------------------------------------------------------------
+        self.volume = self.volume + other_box.volume
+
 
 
 ###############################################################################
